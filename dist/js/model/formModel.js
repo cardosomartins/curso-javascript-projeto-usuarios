@@ -7,6 +7,7 @@ class formModel{
        this._email;
        this._password;
        this._photo;
+       this._photoBase64;
        this._adminBoolean;
        this._formEl = document.getElementById("form-user-create"); 
        this._mainPanel = document.querySelector(".table.table-striped");
@@ -19,7 +20,7 @@ class formModel{
         let rowToBeAdded = document.createElement("tbody");
         rowToBeAdded.innerHTML = `
         <tr>
-            <td><img src="dist/img/user1-128x128.jpg" alt="User Image" class="img-circle img-sm"></td>
+            <td><img src="${this._photoBase64}" alt="User Image" class="img-circle img-sm"></td>
             <td>${this._name}</td>
             <td>${this._email}</td>
             <td>${this._adminBoolean ? "Sim" : "Não"}</td>
@@ -34,6 +35,21 @@ class formModel{
 
     }
 
+    getPhoto(){
+
+        let fileReader = new FileReader();
+
+        fileReader.readAsDataURL(this._photo.files[0]);
+
+        fileReader.onload = () => {      
+            
+            console.log(fileReader.result);
+
+            this._photoBase64 = fileReader.result;
+        }
+
+    }
+
     updateVariables(){
         this._name = this._formEl.querySelector("[id='exampleInputName']").value;
         this._gender = this._formEl.querySelector("[id='exampleInputGenderM']").checked ? "Masculino" : "Feminino";
@@ -41,26 +57,22 @@ class formModel{
         this._country = this._formEl.querySelector("[id='exampleInputCountry']").value;
         this._email = this._formEl.querySelector("[id='exampleInputEmail1']").value;
         this._password = this._formEl.querySelector("[id='exampleInputPassword1']").value;
-        this._photo = this._formEl.querySelector("[id='exampleInputFile']").value
+        this._photo = this._formEl.querySelector("[id='exampleInputFile']");
         this._adminBoolean = this._formEl.querySelector("[type='checkbox']").checked;
     }
+    
 
     Initializer(){
 
         document.getElementById("form-user-create").addEventListener("submit", e => {
     
-            e.preventDefault();
+            e.preventDefault();            
             this.updateVariables();
+            this.getPhoto();
             this.addLine();
-
           });
     }
 }
- 
- 
-var fields = document.querySelectorAll("#form-user-create");
-var user = {};
- 
- 
+
  
  
