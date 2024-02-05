@@ -1,26 +1,26 @@
-class formModel{
-    constructor(){
-       this._name;
-       this._gender;
-       this._birthday;
-       this._country;
-       this._email;
-       this._password;
-       this._photo;
-       this._photoBase64;
-       this._adminBoolean;
-       this._formEl = document.getElementById("form-user-create"); 
-       this._mainPanel = document.querySelector(".table.table-striped");
-       this.addLine()
-       this.Initializer()
+class formModel {
+    constructor() {
+        this._name;
+        this._gender;
+        this._birthday;
+        this._country;
+        this._email;
+        this._password;
+        this._photo;
+        this._photoBase64;
+        this._adminBoolean;
+        this._formEl = document.getElementById("form-user-create");
+        this._mainPanel = document.querySelector(".table.table-striped");
+        this.addLine()
+        this.Initializer()
     }
 
-    addLine(){
+    addLine(base64Photo) {
         console.log("Adicionando linhas");
         let rowToBeAdded = document.createElement("tbody");
         rowToBeAdded.innerHTML = `
         <tr>
-            <td><img src="${this._photoBase64}" alt="User Image" class="img-circle img-sm"></td>
+            <td><img src="${base64Photo}" alt="User Image" class="img-circle img-sm"></td>
             <td>${this._name}</td>
             <td>${this._email}</td>
             <td>${this._adminBoolean ? "Sim" : "Não"}</td>
@@ -35,44 +35,62 @@ class formModel{
 
     }
 
-    getPhoto(){
+    getPhoto() {
 
-        let fileReader = new FileReader();
+        return new Promise((resolve, reject) => {
 
-        fileReader.readAsDataURL(this._photo.files[0]);
+            let fileReader = new FileReader();
 
-        fileReader.onload = () => {      
-            
-            console.log(fileReader.result);
+            fileReader.onload = () => {
+                console.log(fileReader.result);
+                // this._photoBase64 = fileReader.result;
+                console.log("Funcionou")
+                resolve(fileReader.result);
+            }
 
-            this._photoBase64 = fileReader.result;
+            fileReader.onerror = (e) => {
+                console.log("Não Funcionou")
+                reject(e);
+            }
+
+            fileReader.readAsDataURL(this._photo.files[0]);
         }
+        )
 
     }
 
-    updateVariables(){
+    updateVariables() {
         this._name = this._formEl.querySelector("[id='exampleInputName']").value;
         this._gender = this._formEl.querySelector("[id='exampleInputGenderM']").checked ? "Masculino" : "Feminino";
-        this._birthday = this._formEl.querySelector("[id='exampleInputBirth']").value 
+        this._birthday = this._formEl.querySelector("[id='exampleInputBirth']").value
         this._country = this._formEl.querySelector("[id='exampleInputCountry']").value;
         this._email = this._formEl.querySelector("[id='exampleInputEmail1']").value;
         this._password = this._formEl.querySelector("[id='exampleInputPassword1']").value;
         this._photo = this._formEl.querySelector("[id='exampleInputFile']");
         this._adminBoolean = this._formEl.querySelector("[type='checkbox']").checked;
     }
-    
 
-    Initializer(){
+
+    Initializer() {
 
         document.getElementById("form-user-create").addEventListener("submit", e => {
-    
-            e.preventDefault();            
+
+            e.preventDefault();
             this.updateVariables();
-            this.getPhoto();
-            this.addLine();
-          });
+            this.getPhoto().then(
+                (result) => {
+                    console.log(`Dentro da promessa: ${result}`);
+                    this._photoBase64 = result;
+                    this.addLine(this._photoBase64);
+                },
+                (error) => {
+                    console.log(`Dentro da falha: ${result}`);
+                    console.error(e);
+                }
+            );
+        });
     }
 }
 
- 
- 
+
+
