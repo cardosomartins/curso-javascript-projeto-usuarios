@@ -11,12 +11,26 @@ class formModel {
         this._adminBoolean;
         this._formEl = document.getElementById("form-user-create");
         this._mainPanel = document.querySelector(".table.table-striped");
-        this.addLine()
         this.Initializer()
+        let objectToBeStored = {
+            "Nome" : [this._name],
+            "Gender": [this._gender] ,
+            "Birthday:" : [this._birthday],
+            "Country" : [this._country],
+            "Email" : [this._email],
+            "Password" : [this._password],
+            "Photo" : [this._photo],
+            "Admin-Boolean" : [this._adminBoolean]
+            }
+    }
+
+    insertIntoSessionStorage(object){
+        let id = 1;
+        let jsonObject = JSON.stringify(object);
+        sessionStorage.setItem(id, jsonObject);
     }
 
     addLine(base64Photo) {
-        console.log("Adicionando linhas");
         let rowToBeAdded = document.createElement("tbody");
         rowToBeAdded.innerHTML = `
         <tr>
@@ -31,20 +45,25 @@ class formModel {
             </td>
         </tr>`
         this._mainPanel.append(rowToBeAdded);
-
-
+        let objectToBeStored = {
+            "Nome" : [this._name],
+            "Gender": [this._gender] ,
+            "Birthday:" : [this._birthday],
+            "Country" : [this._country],
+            "Email" : [this._email],
+            "Password" : [this._password],
+            "Photo" : [this._photo],
+            "Admin-Boolean" : [this._adminBoolean]
+            }
+        this.insertIntoSessionStorage(objectToBeStored);
     }
 
     getPhoto() {
-
         return new Promise((resolve, reject) => {
 
             let fileReader = new FileReader();
 
             fileReader.onload = () => {
-                console.log(fileReader.result);
-                // this._photoBase64 = fileReader.result;
-                console.log("Funcionou")
                 resolve(fileReader.result);
             }
 
@@ -79,18 +98,13 @@ class formModel {
             this.updateVariables();
             this.getPhoto().then(
                 (result) => {
-                    console.log(`Dentro da promessa: ${result}`);
                     this._photoBase64 = result;
                     this.addLine(this._photoBase64);
                 },
                 (error) => {
-                    console.log(`Dentro da falha: ${result}`);
                     console.error(e);
                 }
             );
         });
     }
 }
-
-
-
