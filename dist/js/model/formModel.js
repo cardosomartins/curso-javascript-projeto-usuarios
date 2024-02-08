@@ -10,7 +10,8 @@ class formModel {
         this._photoBase64;
         this._adminBoolean;
         this._formEl = document.getElementById("form-user-create");
-        this._mainPanel = document.querySelector(".table.table-striped");
+        this._mainPanel = document.querySelector(".table.table-striped");        
+        this._formGroupArray = document.querySelectorAll("#form-user-create [name]"); 
         this.Initializer()
         let objectToBeStored = {
             "Nome" : [this._name],
@@ -21,7 +22,7 @@ class formModel {
             "Password" : [this._password],
             "Photo" : [this._photo],
             "Admin-Boolean" : [this._adminBoolean]
-            }
+            }                
     }
 
     insertIntoSessionStorage(object){
@@ -79,6 +80,40 @@ class formModel {
     }
 
     updateVariables() {
+
+
+        /////////// PAREI AQUI ////////////////////////
+        /////////// PAREI AQUI ////////////////////////
+        /////////// PAREI AQUI ////////////////////////
+        /////////// PAREI AQUI ////////////////////////
+        this._formGroupArray = document.querySelectorAll("#form-user-create [name]"); 
+            console.log(this._formGroupArray);
+        let attributesObject = {};
+        Array.from(this._formGroupArray).forEach(element => {
+
+            if(element.getAttribute("name") == "gender"){
+                if(element.checked){
+                    attributesObject[element.getAttribute("name")] = element.value;
+                }
+            }
+            else if(element.getAttribute("name") == "admin"){
+                element.checked ? attributesObject[element.getAttribute("name")] = "Sim" : attributesObject[element.getAttribute("name")] = "Não";                    
+            }
+            else{                    
+                attributesObject[element.getAttribute("name")] = element.value;
+            }
+        });
+
+
+        
+        /////////// PAREI acimaa ////////////////////////
+        /////////// PAREI acimaa ////////////////////////
+        /////////// PAREI acimaa ////////////////////////
+        /////////// PAREI acimaa ////////////////////////
+        /////////// PAREI acimaa ////////////////////////
+        /////////// PAREI acimaa ////////////////////////
+        /////////// PAREI acimaa ////////////////////////
+
         this._name = this._formEl.querySelector("[id='exampleInputName']").value;
         this._gender = this._formEl.querySelector("[id='exampleInputGenderM']").checked ? "Masculino" : "Feminino";
         this._birthday = this._formEl.querySelector("[id='exampleInputBirth']").value
@@ -94,7 +129,10 @@ class formModel {
 
         document.getElementById("form-user-create").addEventListener("submit", e => {
 
-            e.preventDefault();
+
+            e.preventDefault();           
+
+            console.log(attributesObject);
             this.updateVariables();
             this.getPhoto().then(
                 (result) => {

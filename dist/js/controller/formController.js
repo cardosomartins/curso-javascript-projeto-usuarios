@@ -1,2 +1,2 @@
-let formController = new formModel()
-console.log("Executing controller")
+console.log("Executing controller");
+let formController = new formModel();
