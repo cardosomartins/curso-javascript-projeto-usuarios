@@ -1,28 +1,11 @@
 class formModel {
     constructor() {
-        this._name;
-        this._gender;
-        this._birthday;
-        this._country;
-        this._email;
-        this._password;
-        this._photo;
+        this.attributesObject = {};
         this._photoBase64;
-        this._adminBoolean;
         this._formEl = document.getElementById("form-user-create");
         this._mainPanel = document.querySelector(".table.table-striped");        
         this._formGroupArray = document.querySelectorAll("#form-user-create [name]"); 
-        this.Initializer()
-        let objectToBeStored = {
-            "Nome" : [this._name],
-            "Gender": [this._gender] ,
-            "Birthday:" : [this._birthday],
-            "Country" : [this._country],
-            "Email" : [this._email],
-            "Password" : [this._password],
-            "Photo" : [this._photo],
-            "Admin-Boolean" : [this._adminBoolean]
-            }                
+        this.Initializer()              
     }
 
     insertIntoSessionStorage(object){
@@ -31,14 +14,14 @@ class formModel {
         sessionStorage.setItem(id, jsonObject);
     }
 
-    addLine(base64Photo) {
+    addLine() {
         let rowToBeAdded = document.createElement("tbody");
         rowToBeAdded.innerHTML = `
         <tr>
-            <td><img src="${base64Photo}" alt="User Image" class="img-circle img-sm"></td>
-            <td>${this._name}</td>
-            <td>${this._email}</td>
-            <td>${this._adminBoolean ? "Sim" : "Não"}</td>
+            <td><img src="${this.attributesObject["photo"]}" alt="User Image" class="img-circle img-sm"></td>
+            <td>${this.attributesObject["name"]}</td>
+            <td>${this.attributesObject["email"]}</td>
+            <td>${this.attributesObject["admin"]}</td>
             <td>${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}</td>
             <td>
                 <button type="button" class="btn btn-primary btn-xs btn-flat">Editar</button>
@@ -46,25 +29,16 @@ class formModel {
             </td>
         </tr>`
         this._mainPanel.append(rowToBeAdded);
-        let objectToBeStored = {
-            "Nome" : [this._name],
-            "Gender": [this._gender] ,
-            "Birthday:" : [this._birthday],
-            "Country" : [this._country],
-            "Email" : [this._email],
-            "Password" : [this._password],
-            "Photo" : [this._photo],
-            "Admin-Boolean" : [this._adminBoolean]
-            }
-        this.insertIntoSessionStorage(objectToBeStored);
     }
 
-    getPhoto() {
+    getBase64FromPhoto() {
         return new Promise((resolve, reject) => {
 
             let fileReader = new FileReader();
 
             fileReader.onload = () => {
+                console.log("Deu bom");
+                console.log(this.attributesObject);
                 resolve(fileReader.result);
             }
 
@@ -72,8 +46,9 @@ class formModel {
                 console.log("Não Funcionou")
                 reject(e);
             }
-
-            fileReader.readAsDataURL(this._photo.files[0]);
+            console.log(this.attributesObject["photo"]);
+            fileReader.readAsDataURL(this.attributesObject["photo"]);
+            
         }
         )
 
@@ -81,47 +56,35 @@ class formModel {
 
     updateVariables() {
 
-
-        /////////// PAREI AQUI ////////////////////////
-        /////////// PAREI AQUI ////////////////////////
-        /////////// PAREI AQUI ////////////////////////
-        /////////// PAREI AQUI ////////////////////////
-        this._formGroupArray = document.querySelectorAll("#form-user-create [name]"); 
-            console.log(this._formGroupArray);
-        let attributesObject = {};
+        this._formGroupArray = document.querySelectorAll("#form-user-create [name]");
         Array.from(this._formGroupArray).forEach(element => {
 
             if(element.getAttribute("name") == "gender"){
                 if(element.checked){
-                    attributesObject[element.getAttribute("name")] = element.value;
+                    this.attributesObject[element.getAttribute("name")] = element.value;
                 }
             }
             else if(element.getAttribute("name") == "admin"){
-                element.checked ? attributesObject[element.getAttribute("name")] = "Sim" : attributesObject[element.getAttribute("name")] = "Não";                    
+                element.checked ? this.attributesObject[element.getAttribute("name")] = "Sim" : this.attributesObject[element.getAttribute("name")] = "Não";                    
+            }
+            else if(element.getAttribute("name") == "photo"){
+                this.getBase64FromPhoto().then( (result) => {
+                    console.log("Surprisingly it did work!");
+                    this.attributesObject[element.getAttribute("name")] = result;
+                },
+                (error) => {
+                    console.log(`Booo-ho, it didn't work!`);
+                    console.log(e);
+                }
+                )
             }
             else{                    
-                attributesObject[element.getAttribute("name")] = element.value;
+                this.attributesObject[element.getAttribute("name")] = element.value;
             }
         });
 
+        console.log(this.attributesObject);
 
-        
-        /////////// PAREI acimaa ////////////////////////
-        /////////// PAREI acimaa ////////////////////////
-        /////////// PAREI acimaa ////////////////////////
-        /////////// PAREI acimaa ////////////////////////
-        /////////// PAREI acimaa ////////////////////////
-        /////////// PAREI acimaa ////////////////////////
-        /////////// PAREI acimaa ////////////////////////
-
-        this._name = this._formEl.querySelector("[id='exampleInputName']").value;
-        this._gender = this._formEl.querySelector("[id='exampleInputGenderM']").checked ? "Masculino" : "Feminino";
-        this._birthday = this._formEl.querySelector("[id='exampleInputBirth']").value
-        this._country = this._formEl.querySelector("[id='exampleInputCountry']").value;
-        this._email = this._formEl.querySelector("[id='exampleInputEmail1']").value;
-        this._password = this._formEl.querySelector("[id='exampleInputPassword1']").value;
-        this._photo = this._formEl.querySelector("[id='exampleInputFile']");
-        this._adminBoolean = this._formEl.querySelector("[type='checkbox']").checked;
     }
 
 
@@ -130,19 +93,19 @@ class formModel {
         document.getElementById("form-user-create").addEventListener("submit", e => {
 
 
-            e.preventDefault();           
-
-            console.log(attributesObject);
+            e.preventDefault();
             this.updateVariables();
-            this.getPhoto().then(
-                (result) => {
-                    this._photoBase64 = result;
-                    this.addLine(this._photoBase64);
-                },
-                (error) => {
-                    console.error(e);
-                }
-            );
+            setTimeout(() => {this.addLine()}, 5000);
+            // this.getPhoto().then(
+            //     (result) => {
+            //         this._photoBase64 = result;
+            //         this.addLine();
+            //     },
+            //     (error) => {
+            //         console.error(`Imagem não foi renderizada, erro:${e}`);
+            //     }
+            // );
         });
     }
+    
 }
