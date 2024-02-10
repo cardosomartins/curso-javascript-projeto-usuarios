@@ -21,14 +21,12 @@ class formModel {
 
 
     renderLines() {
-        console.log(typeof (localStorage));
-        console.log(localStorage);
         Object.keys(localStorage).forEach(key => {
             let rowToBeAdded = document.createElement("tbody");
             let storedParsedEl = JSON.parse(localStorage.getItem(key));
             rowToBeAdded.innerHTML = `
             <tr>
-                <td><img src="${storedParsedEl["photo"]}" alt="User Image" class="img-circle img-sm"></td>
+                <td><img src="${storedParsedEl["photo"] ?? "dist/img/anonymous.jpg"}" alt="User Image" class="img-circle img-sm"></td>
                 <td>${storedParsedEl["name"]}</td>
                 <td>${storedParsedEl["email"]}</td>
                 <td>${storedParsedEl["admin"]}</td>
@@ -74,8 +72,7 @@ class formModel {
                 reject(e);
             }
             fileReader.readAsDataURL(this.attributesObject["photo"]);
-        }
-        )
+        });
     }
 
     updateVariables() {
@@ -93,7 +90,8 @@ class formModel {
             }
             else if (element.getAttribute("name") == "photo") {
                 this.attributesObject[element.getAttribute("name")] = element.files[0];
-                this.getBase64FromPhoto().then((result) => {
+                this.getBase64FromPhoto().then(
+                    (result) => {
                     this.attributesObject[element.getAttribute("name")] = result;
                 },
                     (error) => {
@@ -110,7 +108,6 @@ class formModel {
 
     Initializer() {
 
-
         this.renderLines();
 
         document.getElementById("form-user-create").addEventListener("submit", e => {
@@ -118,7 +115,7 @@ class formModel {
             e.preventDefault();
             this.updateVariables();
             this.addLine();
-            this.insertIntoSessionStorage(this.attributesObject);
+            //this.insertIntoSessionStorage(this.attributesObject);
             this.insertIntoLocalStorage(this.attributesObject);
         });
 
