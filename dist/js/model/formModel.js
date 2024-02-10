@@ -3,23 +3,45 @@ class formModel {
         this.attributesObject = {};
         this._photoBase64;
         this._formEl = document.getElementById("form-user-create");
-        this._mainPanel = document.querySelector(".table.table-striped");        
-        this._formGroupArray = document.querySelectorAll("#form-user-create [name]"); 
-        this.Initializer()              
+        this._mainPanel = document.querySelector(".table.table-striped");
+        this._formGroupArray = document.querySelectorAll("#form-user-create [name]");
+        this.Initializer()
     }
 
-    insertIntoSessionStorage(object){
-        console.log(sessionStorage.length);
-        let id = sessionStorage.length + 1;
-        let jsonObject = JSON.stringify(object);
-        sessionStorage.setItem(id, jsonObject);
+
+    insertIntoSessionStorage(object) {
+        let storageKey = sessionStorage.getItem(object["email"]) ? sessionStorage.getItem(object["email"]) : object["email"];
+        sessionStorage.setItem(storageKey, JSON.stringify(object));
     }
 
-    insertIntoLocalStorage(object){     
-        console.log(localStorage.length);
-        let id = localStorage.length + 1;
-        let jsonObject = JSON.stringify(object);
-        localStorage.setItem(id, jsonObject);
+    insertIntoLocalStorage(object) {
+        let storageKey = localStorage.getItem(object["email"]) ? localStorage.getItem(object["email"]) : object["email"];
+        localStorage.setItem(storageKey, JSON.stringify(object));
+    }
+
+
+    renderLines() {
+        console.log(typeof (localStorage));
+        console.log(localStorage);
+        Object.keys(localStorage).forEach(key => {
+            let rowToBeAdded = document.createElement("tbody");
+            let storedParsedEl = JSON.parse(localStorage.getItem(key));
+            rowToBeAdded.innerHTML = `
+            <tr>
+                <td><img src="${storedParsedEl["photo"]}" alt="User Image" class="img-circle img-sm"></td>
+                <td>${storedParsedEl["name"]}</td>
+                <td>${storedParsedEl["email"]}</td>
+                <td>${storedParsedEl["admin"]}</td>
+                <td>${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}</td>
+                <td>
+                    <button type="button" class="btn btn-primary btn-xs btn-flat">Editar</button>
+                    <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
+                </td>
+            </tr>`
+            this._mainPanel.append(rowToBeAdded);
+        });
+
+
     }
 
     addLine() {
@@ -41,7 +63,6 @@ class formModel {
 
     getBase64FromPhoto() {
         return new Promise((resolve, reject) => {
-        
 
             let fileReader = new FileReader();
 
@@ -62,25 +83,25 @@ class formModel {
         this._formGroupArray = document.querySelectorAll("#form-user-create [name]");
         Array.from(this._formGroupArray).forEach(element => {
 
-            if(element.getAttribute("name") == "gender"){
-                if(element.checked){
+            if (element.getAttribute("name") == "gender") {
+                if (element.checked) {
                     this.attributesObject[element.getAttribute("name")] = element.value;
                 }
             }
-            else if(element.getAttribute("name") == "admin"){
-                element.checked ? this.attributesObject[element.getAttribute("name")] = "Sim" : this.attributesObject[element.getAttribute("name")] = "Não";                    
+            else if (element.getAttribute("name") == "admin") {
+                element.checked ? this.attributesObject[element.getAttribute("name")] = "Sim" : this.attributesObject[element.getAttribute("name")] = "Não";
             }
-            else if(element.getAttribute("name") == "photo"){
+            else if (element.getAttribute("name") == "photo") {
                 this.attributesObject[element.getAttribute("name")] = element.files[0];
                 this.getBase64FromPhoto().then((result) => {
                     this.attributesObject[element.getAttribute("name")] = result;
                 },
-                (error) => {
-                    console.log(error);
-                }
+                    (error) => {
+                        console.log(error);
+                    }
                 )
             }
-            else{                    
+            else {
                 this.attributesObject[element.getAttribute("name")] = element.value;
             }
         });
@@ -89,8 +110,10 @@ class formModel {
 
     Initializer() {
 
-        document.getElementById("form-user-create").addEventListener("submit", e => {
 
+        this.renderLines();
+
+        document.getElementById("form-user-create").addEventListener("submit", e => {
 
             e.preventDefault();
             this.updateVariables();
@@ -98,6 +121,7 @@ class formModel {
             this.insertIntoSessionStorage(this.attributesObject);
             this.insertIntoLocalStorage(this.attributesObject);
         });
+
     }
-    
+
 }
