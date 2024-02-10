@@ -33,6 +33,7 @@ class formModel {
 
     getBase64FromPhoto() {
         return new Promise((resolve, reject) => {
+        
 
             let fileReader = new FileReader();
 
@@ -46,12 +47,9 @@ class formModel {
                 console.log("Não Funcionou")
                 reject(e);
             }
-            console.log(this.attributesObject["photo"]);
             fileReader.readAsDataURL(this.attributesObject["photo"]);
-            
         }
         )
-
     }
 
     updateVariables() {
@@ -68,13 +66,14 @@ class formModel {
                 element.checked ? this.attributesObject[element.getAttribute("name")] = "Sim" : this.attributesObject[element.getAttribute("name")] = "Não";                    
             }
             else if(element.getAttribute("name") == "photo"){
-                this.getBase64FromPhoto().then( (result) => {
+                this.attributesObject[element.getAttribute("name")] = element.files[0];
+                this.getBase64FromPhoto().then((result) => {
                     console.log("Surprisingly it did work!");
                     this.attributesObject[element.getAttribute("name")] = result;
                 },
                 (error) => {
                     console.log(`Booo-ho, it didn't work!`);
-                    console.log(e);
+                    console.log(error);
                 }
                 )
             }
@@ -95,16 +94,7 @@ class formModel {
 
             e.preventDefault();
             this.updateVariables();
-            setTimeout(() => {this.addLine()}, 5000);
-            // this.getPhoto().then(
-            //     (result) => {
-            //         this._photoBase64 = result;
-            //         this.addLine();
-            //     },
-            //     (error) => {
-            //         console.error(`Imagem não foi renderizada, erro:${e}`);
-            //     }
-            // );
+            setTimeout(() => {this.addLine()}, 2000);
         });
     }
     
