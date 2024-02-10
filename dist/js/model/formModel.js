@@ -38,13 +38,11 @@ class formModel {
             let fileReader = new FileReader();
 
             fileReader.onload = () => {
-                console.log("Deu bom");
                 console.log(this.attributesObject);
                 resolve(fileReader.result);
             }
 
             fileReader.onerror = (e) => {
-                console.log("Não Funcionou")
                 reject(e);
             }
             fileReader.readAsDataURL(this.attributesObject["photo"]);
@@ -68,11 +66,9 @@ class formModel {
             else if(element.getAttribute("name") == "photo"){
                 this.attributesObject[element.getAttribute("name")] = element.files[0];
                 this.getBase64FromPhoto().then((result) => {
-                    console.log("Surprisingly it did work!");
                     this.attributesObject[element.getAttribute("name")] = result;
                 },
                 (error) => {
-                    console.log(`Booo-ho, it didn't work!`);
                     console.log(error);
                 }
                 )
@@ -94,7 +90,8 @@ class formModel {
 
             e.preventDefault();
             this.updateVariables();
-            setTimeout(() => {this.addLine()}, 2000);
+            this.addLine();
+            this.insertIntoSessionStorage(this.attributesObject);
         });
     }
     
