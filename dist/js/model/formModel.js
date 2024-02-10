@@ -9,9 +9,17 @@ class formModel {
     }
 
     insertIntoSessionStorage(object){
-        let id = 1;
+        console.log(sessionStorage.length);
+        let id = sessionStorage.length + 1;
         let jsonObject = JSON.stringify(object);
         sessionStorage.setItem(id, jsonObject);
+    }
+
+    insertIntoLocalStorage(object){     
+        console.log(localStorage.length);
+        let id = localStorage.length + 1;
+        let jsonObject = JSON.stringify(object);
+        localStorage.setItem(id, jsonObject);
     }
 
     addLine() {
@@ -38,7 +46,6 @@ class formModel {
             let fileReader = new FileReader();
 
             fileReader.onload = () => {
-                console.log(this.attributesObject);
                 resolve(fileReader.result);
             }
 
@@ -77,9 +84,6 @@ class formModel {
                 this.attributesObject[element.getAttribute("name")] = element.value;
             }
         });
-
-        console.log(this.attributesObject);
-
     }
 
 
@@ -92,6 +96,7 @@ class formModel {
             this.updateVariables();
             this.addLine();
             this.insertIntoSessionStorage(this.attributesObject);
+            this.insertIntoLocalStorage(this.attributesObject);
         });
     }
     
