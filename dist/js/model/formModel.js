@@ -29,7 +29,7 @@ class formModel {
             <tr>
                 <td><img src="${storedParsedEl["photo"] ?? "dist/img/anonymous.jpg"}" alt="User Image" class="img-circle img-sm"></td>
                 <td>${storedParsedEl["name"]}</td>
-                <td>${storedParsedEl["email"]}</td>
+                <td class="emailBtn">${storedParsedEl["email"]}</td>
                 <td>${storedParsedEl["admin"]}</td>
                 <td>${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}</td>
                 <td>
@@ -49,12 +49,12 @@ class formModel {
         <tr>
             <td><img src="${this.attributesObject["photo"] ?? "dist/img/anonymous.jpg"}" alt="User Image" class="img-circle img-sm"></td>
             <td>${this.attributesObject["name"]}</td>
-            <td>${this.attributesObject["email"]}</td>
+            <td class="emailBtn">${this.attributesObject["email"]}</td>
             <td>${this.attributesObject["admin"]}</td>
             <td>${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}</td>
             <td>
-                <button type="button" class="btn btn-primary btn-xs btn-flat" id="editButton">Editar</button>
-                <button type="button" class="btn btn-danger btn-xs btn-flat" id="removeButton">Excluir</button>
+                <button type="button" class="btn btn-primary btn-xs btn-flat editBtn">Editar</button>
+                <button type="button" class="btn btn-danger btn-xs btn-flat removeBtn">Excluir</button>
             </td>
         </tr>`
         this._mainPanel.append(rowToBeAdded);
@@ -110,6 +110,11 @@ class formModel {
         await Promise.all(promise);
     }
 
+    removeRow(tr){
+        tr.remove();
+        localStorage.removeItem(tr.querySelector(".emailBtn").textContent);
+    }
+
     Initializer() {
 
         this.renderLines();
@@ -123,20 +128,23 @@ class formModel {
             this.insertIntoLocalStorage(this.attributesObject);
         });
 
-        document.querySelectorAll(".removeBtn").forEach(btn => {
-            btn.addEventListener("click", e => {
-                console.log("remove clicked");
-            })
-        })
+        
 
-        document.querySelectorAll(".editBtn").forEach(btn => {
-            btn.addEventListener("click", e => {
-                console.log("edit clicked");
-            })
-        })
+        setInterval(() => {
+            document.querySelectorAll(".editBtn").forEach(btn => {
+                btn.addEventListener("click", e => {
+                    console.log("edit clicked");
+                })
+            });
 
+            document.querySelectorAll(".removeBtn").forEach(btn => {
+                btn.addEventListener("click", e => {
+                    this.removeRow(btn.closest('tr'));
+                })
+            });            
+        }, 1000)
 
-
+        
     }
 
 }
