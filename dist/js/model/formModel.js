@@ -5,6 +5,7 @@ class formModel {
         this._formEl = document.getElementById("form-user-create");
         this._mainPanel = document.querySelector(".table.table-striped");
         this._formGroupArray = document.querySelectorAll("#form-user-create [name]");
+        
         this.Initializer()
     }
 
@@ -46,14 +47,14 @@ class formModel {
         let rowToBeAdded = document.createElement("tbody");
         rowToBeAdded.innerHTML = `
         <tr>
-            <td><img src="${this.attributesObject["photo"]}" alt="User Image" class="img-circle img-sm"></td>
+            <td><img src="${this.attributesObject["photo"] ?? "dist/img/anonymous.jpg"}" alt="User Image" class="img-circle img-sm"></td>
             <td>${this.attributesObject["name"]}</td>
             <td>${this.attributesObject["email"]}</td>
             <td>${this.attributesObject["admin"]}</td>
             <td>${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}</td>
             <td>
-                <button type="button" class="btn btn-primary btn-xs btn-flat">Editar</button>
-                <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
+                <button type="button" class="btn btn-primary btn-xs btn-flat" id="editButton">Editar</button>
+                <button type="button" class="btn btn-danger btn-xs btn-flat" id="removeButton">Excluir</button>
             </td>
         </tr>`
         this._mainPanel.append(rowToBeAdded);
@@ -75,9 +76,10 @@ class formModel {
         });
     }
 
-    updateVariables() {
+    async updateVariables() {
 
         this._formGroupArray = document.querySelectorAll("#form-user-create [name]");
+        let promise = [];
         Array.from(this._formGroupArray).forEach(element => {
 
             if (element.getAttribute("name") == "gender") {
@@ -90,34 +92,50 @@ class formModel {
             }
             else if (element.getAttribute("name") == "photo") {
                 this.attributesObject[element.getAttribute("name")] = element.files[0];
-                this.getBase64FromPhoto().then(
-                    (result) => {
-                    this.attributesObject[element.getAttribute("name")] = result;
-                },
-                    (error) => {
-                        console.log(error);
-                    }
-                )
+                promise.push(
+                    this.getBase64FromPhoto().then(
+                        (result) => {
+                            this.attributesObject[element.getAttribute("name")] = result;
+                        },
+                        (error) => {
+                            console.log(error);
+                        }
+                ))
             }
             else {
                 this.attributesObject[element.getAttribute("name")] = element.value;
             }
         });
-    }
 
+        await Promise.all(promise);
+    }
 
     Initializer() {
 
         this.renderLines();
 
-        document.getElementById("form-user-create").addEventListener("submit", e => {
+        document.getElementById("form-user-create").addEventListener("submit", async e => {
 
             e.preventDefault();
-            this.updateVariables();
-            this.addLine();
+            await this.updateVariables();
+            this.addLine()
             //this.insertIntoSessionStorage(this.attributesObject);
             this.insertIntoLocalStorage(this.attributesObject);
         });
+
+        document.querySelectorAll("#removeButton").forEach(btn => {
+            btn.addEventListener("click", e => {
+                console.log("remove clicked");
+            })
+        })
+
+        document.querySelectorAll("#editButton").forEach(btn => {
+            btn.addEventListener("click", e => {
+                console.log("edit clicked");
+            })
+        })
+
+
 
     }
 
