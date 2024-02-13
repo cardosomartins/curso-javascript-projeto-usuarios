@@ -5,7 +5,7 @@ class formModel {
         this._formEl = document.getElementById("form-user-create");
         this._mainPanel = document.querySelector(".table.table-striped");
         this._formGroupArray = document.querySelectorAll("#form-user-create [name]");
-        
+
         this.Initializer()
     }
 
@@ -44,20 +44,23 @@ class formModel {
     }
 
     addLine() {
-        let rowToBeAdded = document.createElement("tbody");
-        rowToBeAdded.innerHTML = `
-        <tr>
-            <td><img src="${this.attributesObject["photo"] ?? "dist/img/anonymous.jpg"}" alt="User Image" class="img-circle img-sm"></td>
-            <td>${this.attributesObject["name"]}</td>
-            <td class="emailBtn">${this.attributesObject["email"]}</td>
-            <td>${this.attributesObject["admin"]}</td>
-            <td>${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}</td>
-            <td>
-                <button type="button" class="btn btn-primary btn-xs btn-flat editBtn">Editar</button>
-                <button type="button" class="btn btn-danger btn-xs btn-flat removeBtn">Excluir</button>
-            </td>
-        </tr>`
-        this._mainPanel.append(rowToBeAdded);
+        if (!localStorage.getItem(this.attributesObject["email"])){
+            let rowToBeAdded = document.createElement("tbody");
+            rowToBeAdded.innerHTML = `
+            <tr>
+                <td><img src="${this.attributesObject["photo"] ?? "dist/img/anonymous.jpg"}" alt="User Image" class="img-circle img-sm"></td>
+                <td>${this.attributesObject["name"]}</td>
+                <td class="emailBtn">${this.attributesObject["email"]}</td>
+                <td>${this.attributesObject["admin"]}</td>
+                <td>${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}</td>
+                <td>
+                    <button type="button" class="btn btn-primary btn-xs btn-flat editBtn">Editar</button>
+                    <button type="button" class="btn btn-danger btn-xs btn-flat removeBtn">Excluir</button>
+                </td>
+            </tr>`
+            this._mainPanel.append(rowToBeAdded);
+        }
+
     }
 
     getBase64FromPhoto() {
@@ -100,7 +103,7 @@ class formModel {
                         (error) => {
                             console.log(error);
                         }
-                ))
+                    ))
             }
             else {
                 this.attributesObject[element.getAttribute("name")] = element.value;
@@ -110,7 +113,7 @@ class formModel {
         await Promise.all(promise);
     }
 
-    removeRow(tr){
+    removeRow(tr) {
         tr.remove();
         localStorage.removeItem(tr.querySelector(".emailBtn").textContent);
     }
@@ -128,7 +131,7 @@ class formModel {
             this.insertIntoLocalStorage(this.attributesObject);
         });
 
-        
+
 
         setInterval(() => {
             document.querySelectorAll(".editBtn").forEach(btn => {
@@ -141,10 +144,10 @@ class formModel {
                 btn.addEventListener("click", e => {
                     this.removeRow(btn.closest('tr'));
                 })
-            });            
+            });
         }, 1000)
 
-        
+
     }
 
 }
