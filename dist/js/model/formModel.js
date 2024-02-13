@@ -33,8 +33,8 @@ class formModel {
                 <td>${storedParsedEl["admin"]}</td>
                 <td>${new Date().getDate()}/${new Date().getMonth()}/${new Date().getFullYear()}</td>
                 <td>
-                    <button type="button" class="btn btn-primary btn-xs btn-flat">Editar</button>
-                    <button type="button" class="btn btn-danger btn-xs btn-flat">Excluir</button>
+                    <button type="button" class="btn btn-primary btn-xs btn-flat editBtn">Editar</button>
+                    <button type="button" class="btn btn-danger btn-xs btn-flat removeBtn">Excluir</button>
                 </td>
             </tr>`
             this._mainPanel.append(rowToBeAdded);
@@ -123,13 +123,13 @@ class formModel {
             this.insertIntoLocalStorage(this.attributesObject);
         });
 
-        document.querySelectorAll("#removeButton").forEach(btn => {
+        document.querySelectorAll(".removeBtn").forEach(btn => {
             btn.addEventListener("click", e => {
                 console.log("remove clicked");
             })
         })
 
-        document.querySelectorAll("#editButton").forEach(btn => {
+        document.querySelectorAll(".editBtn").forEach(btn => {
             btn.addEventListener("click", e => {
                 console.log("edit clicked");
             })
