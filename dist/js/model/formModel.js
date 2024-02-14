@@ -16,10 +16,9 @@ class formModel {
     }
 
     insertIntoLocalStorage(object) {
-        let storageKey = localStorage.getItem(object["email"]) ? localStorage.getItem(object["email"]) : object["email"];
+        let storageKey = localStorage.getItem(object["email"]) ? JSON.parse(localStorage.getItem(object["email"]))["email"] : object["email"];
         localStorage.setItem(storageKey, JSON.stringify(object));
     }
-
 
     renderLines() {
         Object.keys(localStorage).forEach(key => {
