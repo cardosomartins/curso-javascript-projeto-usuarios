@@ -21,6 +21,7 @@ class formModel {
     }
 
     renderLines() {
+        this._mainPanel.querySelectorAll("*").forEach(element => element.remove());
         Object.keys(localStorage).forEach(key => {
             let rowToBeAdded = document.createElement("tbody");
             let storedParsedEl = JSON.parse(localStorage.getItem(key));
@@ -38,8 +39,6 @@ class formModel {
             </tr>`
             this._mainPanel.append(rowToBeAdded);
         });
-
-
     }
 
     addLine() {
@@ -78,9 +77,11 @@ class formModel {
         });
     }
 
-    async updateVariables() {
+    async updateVariables(formOrigin) {
 
-        this._formGroupArray = document.querySelectorAll("#form-user-create [name]");
+        if(formOrigin == "Create") this._formGroupArray = document.querySelectorAll("#form-user-create [name]");
+        if(formOrigin == "Edit") this._formGroupArray = document.querySelectorAll("#form-user-edit [name]");
+
         let promise = [];
         Array.from(this._formGroupArray).forEach(element => {
 
@@ -117,6 +118,24 @@ class formModel {
         localStorage.removeItem(tr.querySelector(".emailBtn").textContent);
     }
 
+    editUser(tr){
+        let emailString = tr.querySelector(".emailBtn").textContent;
+        let localStorageEl = JSON.parse(localStorage.getItem(emailString));
+        console.log(localStorageEl);
+        document.querySelector("#editExampleInputName").value = localStorageEl["name"] ?? " ";
+        if(localStorageEl["gender"] == "Masculino"){
+            document.querySelector("#editExampleInputGenderM").checked = true;
+        }
+        else{
+            document.querySelector("#editExampleInputGenderF").checked = true;
+        }
+        document.querySelector("#editExampleInputBirth").value = localStorageEl["birth"] ?? " ";
+        document.querySelector("#editExampleInputCountry").value = localStorageEl["country"] ?? " ";
+        document.querySelector("#editExampleInputEmail1").value = localStorageEl["email"] ?? " ";
+        if(localStorageEl["admin"] == "Sim") document.querySelector("#editCheckbox").checked = true;
+
+    }
+
     Initializer() {
 
         this.renderLines();
@@ -124,7 +143,18 @@ class formModel {
         document.getElementById("form-user-create").addEventListener("submit", async e => {
 
             e.preventDefault();
-            await this.updateVariables();
+            await this.updateVariables("Create");
+            this.addLine()
+            //this.insertIntoSessionStorage(this.attributesObject);
+            this.insertIntoLocalStorage(this.attributesObject);
+        });
+
+        document.getElementById("form-user-edit").addEventListener("submit", async e => {
+
+            e.preventDefault();
+            await this.updateVariables("Edit");
+            localStorage.removeItem(this.attributesObject["email"]);
+            this.renderLines();
             this.addLine()
             //this.insertIntoSessionStorage(this.attributesObject);
             this.insertIntoLocalStorage(this.attributesObject);
@@ -132,19 +162,18 @@ class formModel {
 
 
 
-        setInterval(() => {
-            document.querySelectorAll(".editBtn").forEach(btn => {
-                btn.addEventListener("click", e => {
-                    console.log("edit clicked");
-                })
-            });
+        document.querySelectorAll(".editBtn").forEach(btn => {
+            btn.addEventListener("click", e => {
+                this.editUser(btn.closest('tr'));
+                console.log("edit clicked");
+            })
+        });
 
-            document.querySelectorAll(".removeBtn").forEach(btn => {
-                btn.addEventListener("click", e => {
-                    this.removeRow(btn.closest('tr'));
-                })
-            });
-        }, 1000)
+        document.querySelectorAll(".removeBtn").forEach(btn => {
+            btn.addEventListener("click", e => {
+                this.removeRow(btn.closest('tr'));
+            })
+        });
 
 
     }
