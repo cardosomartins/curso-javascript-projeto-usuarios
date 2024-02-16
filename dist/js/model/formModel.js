@@ -42,7 +42,7 @@ class formModel {
     }
 
     addLine() {
-        if (!localStorage.getItem(this.attributesObject["email"])){
+        if (!localStorage.getItem(this.attributesObject["email"])) {
             let rowToBeAdded = document.createElement("tbody");
             rowToBeAdded.innerHTML = `
             <tr>
@@ -79,8 +79,8 @@ class formModel {
 
     async updateVariables(formOrigin) {
 
-        if(formOrigin == "Create") this._formGroupArray = document.querySelectorAll("#form-user-create [name]");
-        if(formOrigin == "Edit") this._formGroupArray = document.querySelectorAll("#form-user-edit [name]");
+        if (formOrigin == "Create") this._formGroupArray = document.querySelectorAll("#form-user-create [name]");
+        if (formOrigin == "Edit") this._formGroupArray = document.querySelectorAll("#form-user-edit [name]");
 
         let promise = [];
         Array.from(this._formGroupArray).forEach(element => {
@@ -118,21 +118,20 @@ class formModel {
         localStorage.removeItem(tr.querySelector(".emailBtn").textContent);
     }
 
-    editUser(tr){
+    editUser(tr) {
         let emailString = tr.querySelector(".emailBtn").textContent;
         let localStorageEl = JSON.parse(localStorage.getItem(emailString));
-        console.log(localStorageEl);
         document.querySelector("#editExampleInputName").value = localStorageEl["name"] ?? " ";
-        if(localStorageEl["gender"] == "Masculino"){
+        if (localStorageEl["gender"] == "Masculino") {
             document.querySelector("#editExampleInputGenderM").checked = true;
         }
-        else{
+        else {
             document.querySelector("#editExampleInputGenderF").checked = true;
         }
         document.querySelector("#editExampleInputBirth").value = localStorageEl["birth"] ?? " ";
         document.querySelector("#editExampleInputCountry").value = localStorageEl["country"] ?? " ";
         document.querySelector("#editExampleInputEmail1").value = localStorageEl["email"] ?? " ";
-        if(localStorageEl["admin"] == "Sim") document.querySelector("#editCheckbox").checked = true;
+        if (localStorageEl["admin"] == "Sim") document.querySelector("#editCheckbox").checked = true;
 
     }
 
@@ -165,7 +164,7 @@ class formModel {
         document.querySelectorAll(".editBtn").forEach(btn => {
             btn.addEventListener("click", e => {
                 this.editUser(btn.closest('tr'));
-                console.log("edit clicked");
+                document.querySelector("#form-user-edit").scrollIntoView();
             })
         });
 
